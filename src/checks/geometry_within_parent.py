@@ -1,8 +1,7 @@
-from re import match
-
 from geopandas import GeoDataFrame
 
 from src.config import CheckReturnList
+from src.utils import get_name_columns, get_pcode_columns
 
 
 def check_nesting(
@@ -22,18 +21,8 @@ def check_nesting(
     Returns:
         Check result for current layer.
     """
-    name_columns = [
-        column
-        for column in gdf.columns
-        for level in range(admin_level)
-        if match(rf"^ADM{level}_[A-Z][A-Z]$", column)
-    ]
-    pcode_columns = [
-        column
-        for column in gdf.columns
-        for level in range(admin_level)
-        if column == f"ADM{level}_PCODE"
-    ]
+    pcode_columns = get_pcode_columns(gdf, admin_level)
+    name_columns = get_name_columns(gdf, admin_level)
     for name, columns in [("name", name_columns), ("pcode", pcode_columns)]:
         for column in columns:
             column_left = column + "_left"

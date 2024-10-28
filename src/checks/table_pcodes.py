@@ -2,7 +2,7 @@ from geopandas import GeoDataFrame
 from hdx.location.country import Country
 
 from src.config import CheckReturnList
-from src.utils import is_empty
+from src.utils import get_pcode_columns, is_empty
 
 
 def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
@@ -30,12 +30,7 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
 
     check_results = []
     for admin_level, gdf in enumerate(gdfs):
-        pcode_columns = [
-            column
-            for column in gdf.columns
-            for level in range(admin_level + 1)
-            if column == f"ADM{level}_PCODE"
-        ]
+        pcode_columns = get_pcode_columns(gdf, admin_level)
         pcodes = gdf[pcode_columns]
         row = {
             "iso3": iso3,

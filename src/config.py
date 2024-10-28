@@ -84,5 +84,16 @@ metadata_columns = [
     "hdx_license",
 ]
 
+misc_columns = [
+    "OBJECTID",
+    "geometry",
+    "Shape__Area",
+    "Shape__Length",
+    "date",
+    "validOn",
+    "validTo",
+    "AREA_SQKM",
+]
+
 unterm = {x["iso3"]: x for x in read_csv(cwd / "unterm.csv").to_dict("records")}
 m49 = {x["iso3"]: x for x in read_csv(cwd / "m49.csv").to_dict("records")}

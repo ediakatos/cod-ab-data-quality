@@ -2,7 +2,8 @@ from re import match
 
 from geopandas import GeoDataFrame
 
-from src.config import CheckReturnList
+from src.config import CheckReturnList, misc_columns
+from src.utils import get_name_columns, get_pcode_columns
 
 
 def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
@@ -18,28 +19,8 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
     """
     check_results = []
     for admin_level, gdf in enumerate(gdfs):
-        name_columns = [
-            column
-            for column in gdf.columns
-            for level in range(admin_level + 1)
-            if match(rf"^ADM{level}_[A-Z][A-Z]$", column)
-        ]
-        pcode_columns = [
-            column
-            for column in gdf.columns
-            for level in range(admin_level + 1)
-            if column == f"ADM{level}_PCODE"
-        ]
-        metadata_columns = [
-            "OBJECTID",
-            "geometry",
-            "Shape__Area",
-            "Shape__Length",
-            "date",
-            "validOn",
-            "validTo",
-            "AREA_SQKM",
-        ]
+        name_columns = get_name_columns(gdf, admin_level)
+        pcode_columns = get_pcode_columns(gdf, admin_level)
         ref_name_columns = [
             x for x in gdf.columns if match(rf"^ADM{admin_level}_REF", x)
         ]
@@ -52,7 +33,7 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
         valid_columns = (
             name_columns
             + pcode_columns
-            + metadata_columns
+            + misc_columns
             + ref_name_columns
             + alt_name_columns
         )

@@ -24,5 +24,7 @@ def main(checks: DataFrame) -> DataFrame:
         & checks["geom_not_within_parent"].eq(0)
         & checks["geom_within_name_mismatch"].eq(0)
         & checks["geom_within_pcode_mismatch"].eq(0)
+        & checks["name_mismatch"].eq(0)
+        & checks["pcode_mismatch"].eq(0)
     )
     return scores

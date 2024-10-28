@@ -11,6 +11,7 @@ from src.config import MULTIPROCESSING, boundaries_dir, tables_dir
 from src.utils import get_checks_filter, get_metadata
 
 from . import (
+    attribute_match,
     dates,
     geometry_gaps,
     geometry_overlaps_self,
@@ -94,6 +95,7 @@ def main() -> None:
         (geometry_gaps, []),
         (geometry_overlaps_self, []),
         (geometry_within_parent, []),
+        (attribute_match, []),
         (table_pcodes, []),
         (table_names, []),
         (dates, []),

@@ -2,9 +2,11 @@ from argparse import ArgumentParser, Namespace
 from collections.abc import Hashable
 from os import getenv
 from pathlib import Path
+from re import match
 from typing import Any, Literal
 
 import pandas as pd
+from geopandas import GeoDataFrame
 from httpx import Client, Response
 from pandas import DataFrame, to_datetime
 from tenacity import retry, stop_after_attempt, wait_fixed
@@ -155,3 +157,39 @@ def is_empty(string: str) -> bool:
         True if string is only whitespace.
     """
     return str(string).strip() == ""
+
+
+def get_name_columns(gdf: GeoDataFrame, admin_level: int) -> list[str]:
+    """Get all name columns for a GeoDataFrame of a specific admin level.
+
+    Args:
+        gdf: layer GeoDataFrame
+        admin_level: layer admin level
+
+    Returns:
+        All name columns for a GeoDataFrame of a specific admin level.
+    """
+    return [
+        column
+        for column in gdf.columns
+        for level in range(admin_level + 1)
+        if match(rf"^ADM{level}_[A-Z][A-Z]$", column)
+    ]
+
+
+def get_pcode_columns(gdf: GeoDataFrame, admin_level: int) -> list[str]:
+    """Get all P-Code columns for a GeoDataFrame of a specific admin level.
+
+    Args:
+        gdf: layer GeoDataFrame
+        admin_level: layer admin level
+
+    Returns:
+        All P-Code columns for a GeoDataFrame of a specific admin level.
+    """
+    return [
+        column
+        for column in gdf.columns
+        for level in range(admin_level + 1)
+        if column == f"ADM{level}_PCODE"
+    ]
