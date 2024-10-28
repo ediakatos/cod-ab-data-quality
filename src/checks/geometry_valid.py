@@ -62,6 +62,9 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
                 "geom_not_polygon": len(
                     gdf[~gdf.geometry.geom_type.str.contains(POLYGON)].index,
                 ),
+                "geom_has_triangle": (
+                    gdf.make_valid().explode().geometry.count_coordinates().le(4).sum()
+                ),
                 "geom_has_z": len(gdf[gdf.geometry.has_z].index),
                 "geom_invalid": len(gdf[~gdf.geometry.is_valid].index),
                 "geom_invalid_reason": invalid_reason,

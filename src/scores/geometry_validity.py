@@ -20,6 +20,7 @@ def main(checks: DataFrame) -> DataFrame:
         )
         & checks["geom_empty"].eq(0)
         & checks["geom_not_polygon"].eq(0)
+        & checks["geom_has_triangle"].eq(0)
         & checks["geom_has_z"].eq(0)
         & checks["geom_invalid"].eq(0)
         & checks["geom_proj"].eq(EPSG_WGS84)
