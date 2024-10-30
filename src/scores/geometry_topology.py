@@ -20,6 +20,7 @@ def main(checks: DataFrame) -> DataFrame:
             | checks["geom_gap_thinness"].isna()
             | checks["geom_gap_thinness"].gt(SLIVER_GAP_THINNESS)
         )
+        & checks["geom_has_triangle"].eq(0)
         & checks["geom_overlaps_self"].eq(0)
         & checks["geom_not_within_parent"].eq(0)
         & checks["geom_within_name_mismatch"].eq(0)
