@@ -82,6 +82,7 @@ metadata_columns = [
     "hdx_source_1",
     "hdx_source_2",
     "hdx_license",
+    "hdx_caveats",
 ]
 
 misc_columns = [

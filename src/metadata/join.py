@@ -20,6 +20,7 @@ def join_hdx_metadata(hdx: dict) -> dict[str, Any]:
         "hdx_source_1": hdx["dataset_source"],
         "hdx_source_2": hdx["organization"]["title"],
         "hdx_license": hdx["license_title"],
+        "hdx_caveats": hdx.get("caveats"),
         "hdx_url": f"https://data.humdata.org/dataset/{hdx["name"]}",
     }
 
