@@ -20,7 +20,7 @@ def get_aux_codes(lang: str) -> list[str]:
     ]
 
 
-exclude_check = ["zh"]
+exclude_check = ["dv", "zh"]
 
 auxiliary_codes = {
     "ar-TUN": get_aux_codes("ar"),
