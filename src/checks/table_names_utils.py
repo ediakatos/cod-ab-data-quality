@@ -110,7 +110,7 @@ def is_punctuation(column: str, name: str | None, iso3: str) -> bool:
         character set.
     """
     lang = column.split("_")[1].lower()
-    if not name or not name.strip() or not tag_is_valid(lang):
+    if not name or not name.strip() or not tag_is_valid(lang) or lang in exclude_check:
         return False
     char_set = get_char_set(lang, iso3)
     return all(char not in char_set for char in name)
