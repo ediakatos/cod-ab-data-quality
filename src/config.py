@@ -68,6 +68,8 @@ tables_dir.mkdir(parents=True, exist_ok=True)
 official_languages = ["ar", "en", "es", "fr", "ru", "zh"]
 romanized_languages = ["en", "es", "fr", "hu", "id", "nl", "pl", "pt", "ro", "sk"]
 
+deprecated_iso3 = ["PRI", "JPN"]
+
 metadata_columns = [
     "iso3",
     "iso2",

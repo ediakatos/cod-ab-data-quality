@@ -1,5 +1,6 @@
 from logging import getLogger
-from multiprocessing import Pool
+from math import ceil
+from multiprocessing import Pool, cpu_count
 
 from src.utils import get_metadata
 
@@ -14,7 +15,7 @@ def main() -> None:
     logger.info("Starting")
     metadata = get_metadata()
     results = []
-    with Pool() as pool:
+    with Pool(ceil(cpu_count() / 4)) as pool:
         for row in metadata:
             iso3 = row["iso3"]
             levels = row["itos_level"]

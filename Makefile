@@ -5,11 +5,9 @@ all = help
 	@echo "Installing project dependencies.."
 	@poetry install --no-root
 
-
 hooks:
 	@echo "Adding pre-commit hooks.."
 	@poetry run pre-commit install
-
 
 test:
 	@echo "Running unit tests.."

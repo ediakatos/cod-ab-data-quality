@@ -20,7 +20,7 @@ pandas = { version = "^2.2.3", extras = ["excel", "performance"] }
 plotly = "^5.24.1"
 pyarrow = "^18.0.0"
 pyicu = "^2.14"
-python = "^3.12.7"
+python = "~3.12.8"
 python-dotenv = "^1.0.1"
 tenacity = "^9.0.0"
 tqdm = "^4.67.0"
