@@ -65,7 +65,11 @@ def read_csv(file_path: Path | str, *, datetime_to_date: bool = False) -> DataFr
     Returns:
         Pandas DataFrame with converted dtypes.
     """
-    df_csv = pd.read_csv(file_path).convert_dtypes()
+    df_csv = pd.read_csv(
+        file_path,
+        keep_default_na=False,
+        na_values=["", "#N/A"],
+    ).convert_dtypes()
     for col in df_csv.select_dtypes(include=["string"]):
         try:
             df_csv[col] = to_datetime(df_csv[col], format="ISO8601")
