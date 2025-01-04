@@ -36,6 +36,7 @@ def join_itos_metadata(itos: dict) -> dict[str, Any]:
     """
     return {
         "itos_url": itos["url"],
+        "itos_update": Timestamp(itos["update"]),
         "itos_service": itos["directory"],
         "itos_level": list(itos["indexes"].keys())[-1],
         **{

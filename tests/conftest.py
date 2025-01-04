@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Literal
 
 import pytest
-from geopandas import GeoDataFrame, read_file
+from geopandas import GeoDataFrame, read_parquet
 
 
 @pytest.fixture(scope="session")
@@ -15,5 +15,5 @@ def iso3() -> Literal["MDG"]:
 def gdfs() -> list[GeoDataFrame]:
     """Fixture to load test data."""
     test_data_dir = Path("tests/test_data")
-    file_paths = sorted(test_data_dir.glob("*.gpkg"))
-    return [read_file(x) for x in file_paths]
+    file_paths = sorted(test_data_dir.glob("*.parquet"))
+    return [read_parquet(x) for x in file_paths]

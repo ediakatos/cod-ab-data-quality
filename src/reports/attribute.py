@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from geopandas import read_file
+from geopandas import read_parquet
 
 from src.config import attributes_dir, boundaries_dir
 
@@ -14,8 +14,8 @@ def create_csv(iso3: str, level: int) -> None:
         iso3: ISO3 of admin boundary.
         level: Admin level of boundary.
     """
-    file = boundaries_dir / f"{iso3.lower()}_adm{level}.gpkg"
+    file = boundaries_dir / f"{iso3.lower()}_adm{level}.parquet"
     if file.exists():
         csv = attributes_dir / f"{iso3.lower()}_adm{level}.csv"
-        gdf = read_file(file, use_arrow=True)
+        gdf = read_parquet(file)
         gdf.drop(columns="geometry").to_csv(csv, index=False, encoding="utf-8-sig")

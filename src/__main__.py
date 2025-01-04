@@ -15,15 +15,15 @@ def main() -> None:
         - outputs: data/tables/metadata.csv
     - module: download
         - depends: data/tables/metadata.csv
-        - outputs: data/boundaries/*.gpkg
+        - outputs: data/boundaries/*.parquet
     - module: checks
-        - depends: data/tables/metadata.csv, data/boundaries/*.gpkg
+        - depends: data/tables/metadata.csv, data/boundaries/*.parquet
         - outputs: data/tables/checks.csv
     - module: scores
         - depends: data/tables/metadata.csv, data/tables/checks.csv
         - outputs: data/tables/scores.csv
     - module: reports
-        - depends: data/tables/metadata.csv, data/boundaries/*.gpkg
+        - depends: data/tables/metadata.csv, data/boundaries/*.parquet
         - outputs: data/attributes/*.csv, data/images/*.png
     """
     metadata()

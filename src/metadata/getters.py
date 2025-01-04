@@ -1,6 +1,8 @@
 from re import compile
 from typing import Any, Literal
 
+from defusedxml.ElementTree import fromstring
+
 from src.config import TIMEOUT
 from src.utils import client_get
 
@@ -102,5 +104,9 @@ def get_itos_metadata(iso3: str) -> dict[str, Any] | None:
     layers, directory, url = get_service(iso3)
     if layers is None:
         return None
+    if url:
+        text = client_get(url + "/info/metadata", TIMEOUT).text
+        root = fromstring(text)
+        update = root.findtext("Esri/CreaDate")
     indexes = get_layer_indexes(layers)
-    return {"url": url, "directory": directory, "indexes": indexes}
+    return {"url": url, "directory": directory, "update": update, "indexes": indexes}

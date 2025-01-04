@@ -3,11 +3,18 @@ from logging import getLogger
 from pathlib import Path
 from typing import Any
 
-from geopandas import read_file
+from geopandas import GeoDataFrame, read_parquet
 from pandas import to_datetime
 from tenacity import retry, stop_after_attempt, wait_fixed
 
-from src.config import ATTEMPT, TIMEOUT, TIMEOUT_DOWNLOAD, WAIT, boundaries_dir
+from src.config import (
+    ATTEMPT,
+    TIMEOUT,
+    TIMEOUT_DOWNLOAD,
+    WAIT,
+    boundaries_dir,
+    oversized_areas,
+)
 from src.utils import client_get
 
 logger = getLogger(__name__)
@@ -98,7 +105,7 @@ def save_file(data: dict, filename: str) -> None:
     tmp = boundaries_dir / f"{filename}.json"
     with Path.open(tmp, "w") as f:
         dump(data, f, separators=(",", ":"))
-    gdf = read_file(tmp, use_arrow=True)
+    gdf: GeoDataFrame = read_parquet(tmp)
     is_polygon = "Polygon" in gdf["geometry"].geom_type.to_numpy()
     is_multi_polygon = "MultiPolygon" in gdf["geometry"].geom_type.to_numpy()
     if not is_polygon and not is_multi_polygon:
@@ -106,7 +113,12 @@ def save_file(data: dict, filename: str) -> None:
     gdf = gdf.drop(columns=["OBJECTID"], errors="ignore")
     for col in gdf.select_dtypes(include=["datetime"]):
         gdf[col] = to_datetime(gdf[col], utc=True)
-    gdf.to_file(boundaries_dir / f"{filename}.gpkg")
+    gdf.to_parquet(
+        boundaries_dir / f"{filename}.parquet",
+        compression="snappy",
+        geometry_encoding="geoarrow",
+        write_covering_bbox=True,
+    )
     tmp.unlink(missing_ok=True)
 
 
@@ -142,26 +154,31 @@ def download(iso3: str, lvl: int, idx: int, url: str) -> None:
         downloaded.
     """
     filename = f"{iso3}_adm{lvl}".lower()
-    layer_url, layer_query = get_layer(url, idx)
-    esri_json = client_get(layer_url, TIMEOUT_DOWNLOAD, layer_query).json()
-    if "error" not in esri_json and "exceededTransferLimit" not in esri_json:
-        save_file(esri_json, filename)
-    else:
-        count_url, count_query = get_layer_count(url, idx)
-        count = client_get(count_url, TIMEOUT, count_query).json()["count"]
-        for records in [1000, 100, 10, 1]:
-            result = None
-            for offset in range(0, count, records):
-                layer_url, layer_query = get_layer(url, idx, records, offset)
-                esri_json = client_get(layer_url, TIMEOUT_DOWNLOAD, layer_query).json()
-                if "error" in esri_json:
+    if not (iso3 in oversized_areas and lvl in oversized_areas[iso3]):
+        layer_url, layer_query = get_layer(url, idx)
+        esri_json = client_get(layer_url, TIMEOUT_DOWNLOAD, layer_query).json()
+        if "error" not in esri_json and "exceededTransferLimit" not in esri_json:
+            save_file(esri_json, filename)
+        else:
+            count_url, count_query = get_layer_count(url, idx)
+            count = client_get(count_url, TIMEOUT, count_query).json()["count"]
+            for records in [1000, 100, 10, 1]:
+                result = None
+                for offset in range(0, count, records):
+                    layer_url, layer_query = get_layer(url, idx, records, offset)
+                    esri_json = client_get(
+                        layer_url,
+                        TIMEOUT_DOWNLOAD,
+                        layer_query,
+                    ).json()
+                    if "error" in esri_json:
+                        break
+                    if result is None:
+                        result = esri_json
+                    else:
+                        result["features"].extend(esri_json["features"])
+                if result is not None:
+                    save_file(result, filename)
                     break
-                if result is None:
-                    result = esri_json
-                else:
-                    result["features"].extend(esri_json["features"])
-            if result is not None:
-                save_file(result, filename)
-                break
-    if not (boundaries_dir / f"{filename}.gpkg").is_file():
-        raise RuntimeError(filename)
+        if not (boundaries_dir / f"{filename}.parquet").is_file():
+            raise RuntimeError(filename)

@@ -37,13 +37,11 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
             "update_count": 0,
         }
         try:
-            gdf_date = gdf[~gdf["date"].isna()]["date"].dt.date.drop_duplicates()
+            gdf_date = gdf[~gdf["date"].isna()]["date"].drop_duplicates()
             for index, value in enumerate(gdf_date):
                 row["date_count"] += 1
                 row[f"date_{index+1}"] = value
-            gdf_update = gdf[~gdf["validOn"].isna()][
-                "validOn"
-            ].dt.date.drop_duplicates()
+            gdf_update = gdf[~gdf["validOn"].isna()]["validOn"].drop_duplicates()
             for index, value in enumerate(gdf_update):
                 row["update_count"] += 1
                 row[f"update_{index+1}"] = value

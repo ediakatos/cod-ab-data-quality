@@ -68,7 +68,7 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
                 "geom_has_z": len(gdf[gdf.geometry.has_z].index),
                 "geom_invalid": len(gdf[~gdf.geometry.is_valid].index),
                 "geom_invalid_reason": invalid_reason,
-                "geom_proj": gdf.geometry.crs.to_epsg(),
+                "geom_proj": gdf.geometry.crs.to_epsg() or EPSG_WGS84,
                 "geom_min_x": min_x,
                 "geom_min_y": min_y,
                 "geom_max_x": max_x,

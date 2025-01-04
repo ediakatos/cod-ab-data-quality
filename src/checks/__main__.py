@@ -2,9 +2,8 @@ from logging import getLogger
 from multiprocessing import Pool
 from typing import Any
 
-from geopandas import GeoDataFrame, read_file
+from geopandas import GeoDataFrame, read_parquet
 from pandas import DataFrame
-from pyogrio.errors import DataSourceError
 from tqdm import tqdm
 
 from src.config import MULTIPROCESSING, boundaries_dir, tables_dir
@@ -114,10 +113,10 @@ def main() -> None:
             levels = -1
         gdfs = []
         for level in range(levels + 1):
-            file = boundaries_dir / f"{iso3.lower()}_adm{level}.gpkg"
+            file = boundaries_dir / f"{iso3.lower()}_adm{level}.parquet"
             try:
-                gdf = read_file(file, use_arrow=True)
-            except DataSourceError:
+                gdf = read_parquet(file)
+            except FileNotFoundError:
                 gdf = GeoDataFrame()
             gdfs.append(gdf)
         if MULTIPROCESSING:

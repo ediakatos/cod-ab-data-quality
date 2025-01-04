@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from geopandas import read_file
+from geopandas import read_parquet
 from plotly.graph_objects import Choropleth, Figure
 
 from src.config import EPSG_WGS84, PLOTLY_SIMPLIFY, boundaries_dir, images_dir
@@ -15,9 +15,9 @@ def create_png(iso3: str, level: int) -> None:
         iso3: ISO3 of admin boundary.
         level: Admin level of boundary.
     """
-    file = boundaries_dir / f"{iso3.lower()}_adm{level}.gpkg"
+    file = boundaries_dir / f"{iso3.lower()}_adm{level}.parquet"
     if file.exists():
-        gdf = read_file(file, use_arrow=True).to_crs(EPSG_WGS84)
+        gdf = read_parquet(file).to_crs(EPSG_WGS84)
         gdf = gdf[~gdf.geometry.is_empty]
         gdf.geometry = gdf.geometry.simplify(PLOTLY_SIMPLIFY)
         min_x, min_y, max_x, max_y = gdf.geometry.total_bounds

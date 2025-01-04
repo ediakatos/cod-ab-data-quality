@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from tenacity import retry, stop_after_attempt, wait_fixed
 
-from src.config import ATTEMPT, WAIT, boundaries_dir
+from src.config import ATTEMPT, WAIT, boundaries_dir, oversized_areas
 
 logger = getLogger(__name__)
 
@@ -84,9 +84,34 @@ def is_polygon(file: Path) -> bool:
     return bool(regex.search(result.stdout.decode("utf-8")))
 
 
+def to_parquet(filename: str) -> None:
+    """Uses OGR2OGR to turn a GeoPackage into GeoParquet.
+
+    Args:
+        filename: Name of the downloaded layer.
+    """
+    src_dataset = boundaries_dir / f"{filename}.gpkg"
+    dst_dataset = boundaries_dir / f"{filename}.parquet"
+    dst_dataset.unlink(missing_ok=True)
+    run(
+        [
+            "ogr2ogr",
+            *["-nln", filename],
+            *["-nlt", "PROMOTE_TO_MULTI"],
+            *["-lco", "COMPRESSION=ZSTD"],
+            *["-lco", "GEOMETRY_ENCODING=GEOARROW"],
+            *["-lco", "GEOMETRY_NAME=geometry"],
+            *["-mapFieldType", "DateTime=Date"],
+            *[dst_dataset, src_dataset],
+        ],
+        check=False,
+    )
+    src_dataset.unlink(missing_ok=True)
+
+
 @retry(stop=stop_after_attempt(ATTEMPT), wait=wait_fixed(WAIT))
 def download(iso3: str, lvl: int, idx: int, url: str) -> None:
-    """Downloads ESRI JSON from an ArcGIS Feature Server and saves as GeoPackage.
+    """Downloads ESRI JSON from an ArcGIS Feature Server and saves as GeoParquet.
 
     First, attempts to download ESRI JSON paginating through the layer with the value
     set by "maxRecordCount" (default behavior when "resultRecordCount" is unspecified).
@@ -113,9 +138,11 @@ def download(iso3: str, lvl: int, idx: int, url: str) -> None:
         downloaded.
     """
     filename = f"{iso3}_adm{lvl}".lower()
-    for records in [None, 1000, 100, 10, 1]:
-        result = ogr2ogr(idx, url, filename, records)
-        if result.returncode == 0:
-            break
-    if not is_polygon(boundaries_dir / f"{filename}.gpkg"):
-        raise RuntimeError(filename)
+    if not (iso3 in oversized_areas and lvl in oversized_areas[iso3]):
+        for records in [None, 1000, 100, 10, 1]:
+            result = ogr2ogr(idx, url, filename, records)
+            if result.returncode == 0:
+                break
+        if not is_polygon(boundaries_dir / f"{filename}.gpkg"):
+            raise RuntimeError(filename)
+        to_parquet(filename)

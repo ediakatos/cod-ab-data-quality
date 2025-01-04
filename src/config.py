@@ -69,12 +69,14 @@ official_languages = ["ar", "en", "es", "fr", "ru", "zh"]
 romanized_languages = ["en", "es", "fr", "hu", "id", "nl", "pl", "pt", "ro", "sk"]
 
 deprecated_iso3 = ["PRI", "JPN"]
+oversized_areas = {"CHL": [0, 1], "IDN": [0], "PHL": [0, 1, 2]}
 
 metadata_columns = [
     "iso3",
     "iso2",
     "name",
     "itos_url",
+    "itos_update",
     "itos_service",
     "itos_level",
     *[f"itos_index_{level}" for level in range(ADMIN_LEVELS + 1)],

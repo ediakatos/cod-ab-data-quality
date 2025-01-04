@@ -25,6 +25,7 @@ exclude_check = ["dv", "zh"]
 auxiliary_codes = {
     "ar-TUN": get_aux_codes("ar"),
     "en-CHN": get_aux_codes("en"),
+    "en-LBN": get_aux_codes("en"),
     "en-PHL": get_aux_codes("en"),
     "en-ZAF": get_aux_codes("en"),
     "es-PAN": get_aux_codes("es"),
