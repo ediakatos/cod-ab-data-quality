@@ -22,6 +22,8 @@ def get_aux_codes(lang: str) -> list[str]:
 
 exclude_check = ["dv", "zh"]
 
+exclude_case = ["ka"]
+
 auxiliary_codes = {
     "ar-TUN": get_aux_codes("ar"),
     "en-CHN": get_aux_codes("en"),

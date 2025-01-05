@@ -5,6 +5,7 @@ from geopandas import GeoDataFrame
 from src.config import CheckReturnList
 from src.utils import is_empty
 
+from .table_names_config import exclude_case
 from .table_names_utils import (
     get_invalid_chars,
     has_double_spaces,
@@ -71,10 +72,20 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
                 [names[col].map(has_double_spaces).sum() for col in name_columns],
             ),
             "name_upper": sum(
-                [names[col].map(is_upper).sum() for col in name_columns],
+                [
+                    names[col].map(is_upper).sum()
+                    if col[-2:].lower() not in exclude_case
+                    else 0
+                    for col in name_columns
+                ],
             ),
             "name_lower": sum(
-                [names[col].map(is_lower).sum() for col in name_columns],
+                [
+                    names[col].map(is_lower).sum()
+                    if col[-2:].lower() not in exclude_case
+                    else 0
+                    for col in name_columns
+                ],
             ),
             "name_no_valid": sum(
                 [

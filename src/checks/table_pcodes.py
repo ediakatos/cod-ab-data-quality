@@ -20,6 +20,8 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
     def not_iso2(value: str | None) -> bool:
         iso2 = Country.get_iso2_from_iso3(iso3)
         if iso2 and value and value.strip():
+            if value.startswith(iso3):
+                return True
             return not value.startswith(iso2)
         return False
 
