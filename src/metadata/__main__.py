@@ -5,7 +5,7 @@ from hdx.location.country import Country
 from pandas import DataFrame
 from tqdm import tqdm
 
-from src.config import deprecated_iso3, metadata_columns, tables_dir
+from src.config import ignored_iso3, metadata_columns, tables_dir
 from src.utils import get_iso3
 
 from .getters import get_hdx_metadata, get_itos_metadata
@@ -31,7 +31,7 @@ def get_metadata() -> list[dict[str, Any]]:
             "name": Country.get_country_name_from_iso3(iso3),
         }
         for iso3 in Country.countriesdata()["countries"]
-        if iso3 is not None and iso3 not in deprecated_iso3
+        if iso3 is not None and iso3 not in ignored_iso3
     ]
     iso3_list = get_iso3()
     if len(iso3_list):

@@ -46,7 +46,7 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
                 for x in gdf.geometry.to_crs(EPSG_WGS84).total_bounds
             ]
             epsg_ease = get_epsg_ease(min_y, max_y)
-            area = int(gdf.geometry.to_crs(epsg_ease).area.sum())
+            area = gdf.geometry.to_crs(epsg_ease).area.sum()
             invalid_reason = ", ".join(
                 {
                     reason.split("[")[0]
@@ -73,7 +73,7 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
                 "geom_min_y": min_y,
                 "geom_max_x": max_x,
                 "geom_max_y": max_y,
-                "geom_area_km": area / METERS_PER_KM,
+                "geom_area_km": round(area / METERS_PER_KM, 5),
             }
             if "AREA_SQKM" in gdf.columns:
                 row["geom_area_km_attr"] = gdf["AREA_SQKM"].sum()

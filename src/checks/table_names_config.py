@@ -24,20 +24,38 @@ exclude_check = ["dv", "zh"]
 
 exclude_case = ["ka"]
 
+extras_si_lka = [
+    "U+0041",
+    "U+0042",
+    "U+0043",
+    "U+0044",
+    "U+0045",
+    "U+0049",
+    "U+0050",
+    "U+0052",
+    "U+0053",
+    "U+0054",
+    "U+0059",
+]
+
 auxiliary_codes = {
     "ar-TUN": get_aux_codes("ar"),
+    "en-BLM": get_aux_codes("en"),
     "en-CHN": get_aux_codes("en"),
+    "en-CUW": get_aux_codes("en"),
     "en-LBN": get_aux_codes("en"),
     "en-PHL": get_aux_codes("en"),
+    "en-TUR": get_aux_codes("en"),
     "en-ZAF": get_aux_codes("en"),
     "es-PAN": get_aux_codes("es"),
+    "fa-AFG": [*get_aux_codes("fa"), "U+067C", "U+0685", "U+0693", "U+06C0", "U+06CD"],
     "fa-IRN": get_aux_codes("fa"),
     "ht-HTI": get_aux_codes("ht"),
     "hy-ARM": get_aux_codes("hy"),
     "ky-KGZ": [*get_aux_codes("ky"), "U+04C9", "U+04CA"],
     "my-MMR": [*get_aux_codes("my"), "U+104A", "U+200B"],
     "pt-BRA": get_aux_codes("pt"),
-    "si-LKA": get_aux_codes("si"),
+    "si-LKA": [*get_aux_codes("si"), *extras_si_lka],
     "tr-TUR": get_aux_codes("tr"),
     "vi-VNM": [*get_aux_codes("vi"), "U+0300", "U+0301"],
 }

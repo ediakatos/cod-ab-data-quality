@@ -68,7 +68,7 @@ tables_dir.mkdir(parents=True, exist_ok=True)
 official_languages = ["ar", "en", "es", "fr", "ru", "zh"]
 romanized_languages = ["en", "es", "fr", "hu", "id", "nl", "pl", "pt", "ro", "sk"]
 
-deprecated_iso3 = ["PRI", "JPN"]
+ignored_iso3 = ["PRI", "JPN", "TJK"]
 oversized_areas = {"CHL": [0, 1], "IDN": [0], "PHL": [0, 1, 2]}
 
 metadata_columns = [

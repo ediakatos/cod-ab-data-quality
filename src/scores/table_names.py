@@ -20,17 +20,31 @@ def main(checks: DataFrame) -> DataFrame:
         & checks["name_column_count"].ge(
             checks["language_count"] * (checks["level"] + 1),
         )
-        & checks["name_empty"].eq(0)
-        & checks["name_duplicated"].eq(0)
         & checks["name_spaces_double"].eq(0)
         & checks["name_spaces_strip"].eq(0)
-        & (checks["name_upper"] * checks["name_column_count"]).lt(
+        & (checks["name_empty"] * checks["name_column_count"]).lt(
             checks["name_cell_count"],
         )
-        & (checks["name_lower"] * checks["name_column_count"]).lt(
-            checks["name_cell_count"],
+        & (
+            (checks["name_upper"] * checks["name_column_count"]).lt(
+                checks["name_cell_count"],
+            )
+            | (checks["name_numbers"] * checks["name_column_count"]).ge(
+                checks["name_cell_count"],
+            )
         )
-        & checks["name_no_valid"].eq(0)
+        & (
+            (checks["name_lower"] * checks["name_column_count"]).lt(
+                checks["name_cell_count"],
+            )
+            | (checks["name_numbers"] * checks["name_column_count"]).ge(
+                checks["name_cell_count"],
+            )
+        )
+        & (
+            checks["name_no_valid"].eq(0)
+            | checks["name_no_valid"].eq(checks["name_numbers"])
+        )
         & checks["name_invalid"].eq(0)
         & checks["name_invalid_adm0"].eq(0)
     )

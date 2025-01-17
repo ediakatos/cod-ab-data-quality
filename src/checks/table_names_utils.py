@@ -97,6 +97,20 @@ def is_lower(name: str | None) -> bool:
     return name == name.lower() and name.lower() != name.upper()
 
 
+def has_numbers(name: str | None) -> bool:
+    """Checks if name has numbers.
+
+    Args:
+        name: Name string.
+
+    Returns:
+        True if name has numbers.
+    """
+    if not name or not name.strip():
+        return False
+    return any(char.isdigit() for char in name)
+
+
 def is_punctuation(column: str, name: str | None, iso3: str) -> bool:
     """Check if a value within a column is a valid name based on it's language code.
 

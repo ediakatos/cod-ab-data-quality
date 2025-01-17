@@ -9,6 +9,7 @@ from .table_names_config import exclude_case
 from .table_names_utils import (
     get_invalid_chars,
     has_double_spaces,
+    has_numbers,
     has_strippable_spaces,
     is_invalid,
     is_invalid_adm0,
@@ -86,6 +87,9 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
                     else 0
                     for col in name_columns
                 ],
+            ),
+            "name_numbers": sum(
+                [names[col].map(has_numbers).sum() for col in name_columns],
             ),
             "name_no_valid": sum(
                 [
