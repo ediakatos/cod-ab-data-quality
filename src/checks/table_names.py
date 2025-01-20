@@ -65,6 +65,7 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
             "name_column_count": len(name_columns),
             "name_cell_count": max(names.size, 1),
             "name_empty": (names.isna() | names.map(is_empty)).sum().sum(),
+            "name_empty_column": (names.isna() | names.map(is_empty)).all().sum(),
             "name_duplicated": names.duplicated().sum().sum(),
             "name_spaces_strip": sum(
                 [names[col].map(has_strippable_spaces).sum() for col in name_columns],
@@ -80,6 +81,14 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
                     for col in name_columns
                 ],
             ),
+            "name_upper_column": sum(
+                [
+                    names[col].map(is_upper).all()
+                    if col[-2:].lower() not in exclude_case
+                    else 0
+                    for col in name_columns
+                ],
+            ),
             "name_lower": sum(
                 [
                     names[col].map(is_lower).sum()
@@ -88,8 +97,19 @@ def main(iso3: str, gdfs: list[GeoDataFrame]) -> CheckReturnList:
                     for col in name_columns
                 ],
             ),
+            "name_lower_column": sum(
+                [
+                    names[col].map(is_lower).all()
+                    if col[-2:].lower() not in exclude_case
+                    else 0
+                    for col in name_columns
+                ],
+            ),
             "name_numbers": sum(
                 [names[col].map(has_numbers).sum() for col in name_columns],
+            ),
+            "name_numbers_column": sum(
+                [names[col].map(has_numbers).all() for col in name_columns],
             ),
             "name_no_valid": sum(
                 [
